@@ -14,10 +14,11 @@ public class ApplicationDriver{
 	}
 	
 	private static void createAndShowGUI() {
-		JFrame adminFrame = new JFrame("Admin Panel");
+		JFrame adminFrame = new JFrame("Admin Control Panel");
 		adminFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		adminFrame.add(AdminPanel.getInstance());
 		adminFrame.pack();
+		adminFrame.setLocationRelativeTo(null);
 		adminFrame.setVisible(true);
 	}
 
