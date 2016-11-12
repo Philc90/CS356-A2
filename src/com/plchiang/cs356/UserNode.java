@@ -8,19 +8,31 @@ package com.plchiang.cs356;
 import javax.swing.tree.DefaultMutableTreeNode;
 
 public class UserNode extends DefaultMutableTreeNode {
-	private User user;
+	private User myUser;
 	
 	public UserNode(String userID) {
 		super(userID);
-		user = new User(userID);
+		myUser = new User(userID);
 		super.allowsChildren = false;
 	}
 	
-	public void broadcast(String msg) {
-		user.broadcast(msg);
+	public void broadcast(String tweet) {
+		myUser.broadcast(tweet);
+	}
+	
+	public void subscribe(UserNode user) {
+		myUser.subscribe(user.getUser());
+	}
+	
+	public void unsubscribe(UserNode user) {
+		myUser.unsubscribe(user.getUser());
 	}
 	
 	public String getUserID() {
-		return user.getUserID();
+		return myUser.getUserID();
+	}
+	
+	public User getUser() {
+		return myUser;
 	}
 }

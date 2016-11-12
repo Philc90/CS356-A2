@@ -6,20 +6,28 @@
 package com.plchiang.cs356;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+
+import javax.swing.DefaultListModel;
 
 import com.plchiang.cs356.observer.*;
 
 public class User extends Subject implements Observer{
 	private String userID;
-	private List<Observer> followers, followings;
+	private List<Observer> followers;
+	private HashSet<Observer> followings;
 	private String msg;
+	private DefaultListModel<String> followingModel, newsfeedModel;
 	
 	public User(String userID) {
 		super();
 		this.userID = userID;
 		followers = super.observers;
-		followings = new ArrayList<Observer>();
+		followings = new HashSet<>();
+		followingModel = new DefaultListModel<>();
+		newsfeedModel = new DefaultListModel<>();
 		msg = "";
 	}
 	
@@ -31,31 +39,47 @@ public class User extends Subject implements Observer{
 		return msg;
 	}
 	
-	public void broadcast(String msg) {
-		this.msg = msg;
+	public void broadcast(String tweet) {
+		this.msg = userID + ": " + tweet;
 		notifyObservers();
 	}
 	
-	@Override
-	public void attach(Observer obs) {
-		//ignore subscribing to oneself
-		if(obs != this) {
-			observers.add(obs);
+	public void subscribe(User user) {
+		//ignore subscribing to oneself or already subscribed
+		if(user != this && !followings.contains(user)) {
+			user.attach(this);
+			followings.add(user);
+			followingModel.addElement(user.userID);
 		}
 	}
 	
-	@Override
-	public void detach(Observer obs) {
-		//ignore subscribing to oneself
-		if(obs != this) {
-			observers.remove(obs);
+	public void unsubscribe(User user) {
+		//ignore subscribing to oneself or already subscribed
+		if(user != this && !followings.contains(user)) {
+			user.detach(this);
+			followings.remove(user);
+			followingModel.removeElement(user.userID);
 		}
+	}
+	
+	public DefaultListModel<String> getNewsfeedModel() {
+		return newsfeedModel;
+	}
+	
+	public DefaultListModel<String> getFollowingModel() {
+		return followingModel;
 	}
 	
 	@Override
 	public void update(Subject s) {
 		User user = ((User) s);
-		System.out.println(user.getUserID() + ": " + user.getMessage());
+		System.out.println(user.getMessage());
+		if(newsfeedModel != null) {
+			newsfeedModel.addElement(user.getMessage());
+		} else {
+			System.out.println("Warning: no model set for user " + userID);
+		}
+		
 	}
 	
 }
