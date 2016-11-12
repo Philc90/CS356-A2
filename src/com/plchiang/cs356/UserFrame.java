@@ -21,6 +21,8 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
+import com.plchiang.cs356.composite.UserNode;
+
 public class UserFrame extends JFrame {
 	private User user;
 	private JPanel userPanel;
@@ -29,7 +31,7 @@ public class UserFrame extends JFrame {
 	public UserFrame(UserNode userNode) {
 		user = userNode.getUser();
 		userRecord  = AdminFrame.getUserRecord();
-		setTitle(user.getUserID() + "'s User Panel");
+		setTitle(user.getUserID() + "'s Control Panel");
 		initComponents();
 		pack();
 		setLocationRelativeTo(null);
@@ -101,11 +103,15 @@ public class UserFrame extends JFrame {
 		});
 		userPanel.add(postBtn);
 		
+		JLabel newsfeedLabel = new JLabel("Newsfeed");
+		newsfeedLabel.setBounds(10,245,150,30);
+		userPanel.add(newsfeedLabel);
+		
 		JList<String> newsfeedList = new JList<>();
 		
 		newsfeedList.setModel(newsfeedModel);
 		JScrollPane newsfeedPane = new JScrollPane(newsfeedList);
-		newsfeedPane.setBounds(10,245,280,245);
+		newsfeedPane.setBounds(10,275,280,205);
 		newsfeedList.setLayoutOrientation(JList.VERTICAL);
 		newsfeedList.setVisibleRowCount(-1);
 		userPanel.add(newsfeedPane);

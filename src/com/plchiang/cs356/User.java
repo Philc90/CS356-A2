@@ -13,8 +13,10 @@ import java.util.Set;
 import javax.swing.DefaultListModel;
 
 import com.plchiang.cs356.observer.*;
+import com.plchiang.cs356.visitor.Visitable;
+import com.plchiang.cs356.visitor.Visitor;
 
-public class User extends Subject implements Observer{
+public class User extends Subject implements Observer {
 	private String userID;
 	private List<Observer> followers;
 	private HashSet<Observer> followings;

@@ -3,11 +3,15 @@
  *  Is a wrapper for User class in order to use it in JTree.
  */
 
-package com.plchiang.cs356;
+package com.plchiang.cs356.composite;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 
-public class UserNode extends DefaultMutableTreeNode {
+import com.plchiang.cs356.User;
+import com.plchiang.cs356.visitor.Visitable;
+import com.plchiang.cs356.visitor.Visitor;
+
+public class UserNode extends MyTreeNode implements Visitable {
 	private User myUser;
 	
 	public UserNode(String userID) {
@@ -34,5 +38,10 @@ public class UserNode extends DefaultMutableTreeNode {
 	
 	public User getUser() {
 		return myUser;
+	}
+
+	@Override
+	public void accept(Visitor visitor) {
+		visitor.visitUserNode(this);
 	}
 }
