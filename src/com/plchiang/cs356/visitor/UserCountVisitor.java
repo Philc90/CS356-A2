@@ -1,3 +1,6 @@
+/*
+ * Visitor class that counts the number of users in MyTree
+ */
 package com.plchiang.cs356.visitor;
 
 import com.plchiang.cs356.composite.UserGroupNode;

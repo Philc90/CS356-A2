@@ -1,3 +1,8 @@
+/*
+ * ApplicationDriver
+ * The entry point for the program
+ */
+
 package com.plchiang.cs356;
 
 import javax.swing.JFrame;

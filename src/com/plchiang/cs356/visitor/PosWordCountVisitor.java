@@ -1,3 +1,7 @@
+/*
+ * Visitor class that counts the number of positive words in each user's newsfeed
+ */
+
 package com.plchiang.cs356.visitor;
 
 import java.util.HashSet;
@@ -19,7 +23,6 @@ public class PosWordCountVisitor extends CountVisitor {
 		positiveWords.add("good");
 		positiveWords.add("great");
 		positiveWords.add("fantastic");
-		
 	}
 
 	@Override

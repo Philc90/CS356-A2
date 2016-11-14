@@ -1,3 +1,7 @@
+/*
+ * MyTree is a JTree used to display the users and user groups in the GUI.
+ */
+
 package com.plchiang.cs356;
 
 import java.util.Enumeration;
@@ -46,6 +50,7 @@ public class MyTree extends JTree{
 
 			@Override
 			public void treeNodesInserted(TreeModelEvent arg0) {
+				//when new node inserted in MyTree, then auto expand
 				expandPath(arg0.getTreePath());
 			}
 
@@ -64,7 +69,7 @@ public class MyTree extends JTree{
 		});
 		
 		DefaultTreeModel model = (DefaultTreeModel)getModel();
-		
+		/*********Populate the tree with initially 2 users (Sam, Alex) and 2 usergroups (root, group1)******/
 		UserNode userSam = new UserNode("Sam");
 		AdminFrame.getUserRecord().put(userSam.getUserID(), userSam.getUser());
 		DefaultMutableTreeNode group1 = new UserGroupNode("group1");
@@ -75,6 +80,7 @@ public class MyTree extends JTree{
 		AdminFrame.getUserRecord().put("Alex", userAlex.getUser());
 		userSam.subscribe(userAlex);
 		model.insertNodeInto(userAlex, this.root, this.root.getChildCount());
+		/***********************************************************************/
 		
 		//initialize tree with nodes expanded
 		for (int i = 0; i < getRowCount(); i++) {
@@ -82,10 +88,18 @@ public class MyTree extends JTree{
 		}
 	}
 	
+	/*
+	 * @return the most recently selected node (clicked on by the user)
+	 */
 	public DefaultMutableTreeNode getSelectedNode(){
 		return selectedNode;
 	}
 	
+	/*
+	 * Method call to initiate the accept method from the Visitable interface on all nodes in the
+	 * tree.
+	 * @param visitor the visitor to use
+	 */
 	public void acceptNodeVisitor(Visitor visitor) {
 		Enumeration<MyTreeNode> e = root.preorderEnumeration();
 		while(e.hasMoreElements()) {

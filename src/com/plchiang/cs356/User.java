@@ -26,26 +26,58 @@ public class User extends Subject implements Observer {
 	public User(String userID) {
 		super();
 		this.userID = userID;
+		//followers are the observers of this object, inherited from Subject class
 		followers = super.observers;
+		//followings keeps track of what users already subscribed to so you don't subscribe twice.
 		followings = new HashSet<>();
+		//followingModel keeps track of all the users this user is following,
+		//		and is necessary for updating the JList that displays the user's following list in the GUI.
 		followingModel = new DefaultListModel<>();
+		//newsfeedModel keeps track of all the tweets posted to the user's newsfeed,
+		//		and is necessary for updating the JList that displays the user's newsfeed in the GUI.
 		newsfeedModel = new DefaultListModel<>();
 		msg = "";
 	}
 	
+	/*
+	 * accessor for userID
+	 */
 	public String getUserID() {
 		return userID;
 	}
 	
+	/*
+	 * accessor for the user's most current message
+	 */
 	public String getMessage() {
 		return msg;
 	}
 	
+	/*
+	 * accessor for newsfeedModel.
+	 */
+	public DefaultListModel<String> getNewsfeedModel() {
+		return newsfeedModel;
+	}
+	
+	/*
+	 * accessor for followingModel
+	 */
+	public DefaultListModel<String> getFollowingModel() {
+		return followingModel;
+	}
+	
+	/*
+	 * posts tweet to followers' newsfeed
+	 */
 	public void broadcast(String tweet) {
 		this.msg = userID + ": " + tweet;
 		notifyObservers();
 	}
 	
+	/*
+	 * subscribes to the other user
+	 */
 	public void subscribe(User user) {
 		//ignore subscribing to oneself or already subscribed
 		if(user != this && !followings.contains(user)) {
@@ -55,32 +87,28 @@ public class User extends Subject implements Observer {
 		}
 	}
 	
+	/*
+	 * unsubscribes from the other user
+	 */
 	public void unsubscribe(User user) {
-		//ignore subscribing to oneself or already subscribed
-		if(user != this && !followings.contains(user)) {
+		//ignore unsubscribing to oneself
+		if(user != this) {
 			user.detach(this);
 			followings.remove(user);
 			followingModel.removeElement(user.userID);
 		}
 	}
 	
-	public DefaultListModel<String> getNewsfeedModel() {
-		return newsfeedModel;
-	}
-	
-	public DefaultListModel<String> getFollowingModel() {
-		return followingModel;
-	}
-	
+	/*
+	 * (non-Javadoc)
+	 * @see com.plchiang.cs356.observer.Observer#update(com.plchiang.cs356.observer.Subject)
+	 */
 	@Override
 	public void update(Subject s) {
 		User user = ((User) s);
 		System.out.println(user.getMessage());
-		if(newsfeedModel != null) {
-			newsfeedModel.addElement(user.getMessage());
-		} else {
-			System.out.println("Warning: no model set for user " + userID);
-		}
+		//upon receiving a new message, update the newsfeed in the GUI.
+		newsfeedModel.addElement(user.getMessage());
 		
 	}
 	

@@ -1,3 +1,8 @@
+/*
+ * Abstract base class for the Visitor classes that count things
+ * (user, group, total message, and positive word counters)
+ */
+
 package com.plchiang.cs356.visitor;
 
 import com.plchiang.cs356.composite.UserGroupNode;

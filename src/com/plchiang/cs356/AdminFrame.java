@@ -1,3 +1,8 @@
+/*
+ * AdminFrame
+ * The admin control panel for the program. Implements Singleton pattern.
+ */
+
 package com.plchiang.cs356;
 
 import java.awt.Color;
@@ -33,16 +38,20 @@ import com.plchiang.cs356.visitor.PosWordCountVisitor;
 import com.plchiang.cs356.visitor.UserCountVisitor;
 
 public class AdminFrame extends JFrame {
-//	single instance of this class running in the program
+	//	single instance of this class running in the program
 	private static AdminFrame INSTANCE = null;
 	private static Hashtable<String, User> userRecord;
 	private static Hashtable<String, UserGroupNode> userGroupRecord;
 	private static JPanel adminPanel;
 	private static final Color darkSlateGray = new Color(47, 79, 79);
 	private static MyTree tree;
-//	private static DefaultMutableTreeNode selectedNode;
+	private JTextField userIDField, groupIDField;
+	private JButton addUserBtn, addGroupBtn, userViewBtn, showUserTotBtn, 
+					showGroupTotBtn, showMsgsTotBtn, showPosBtn;
 
-//	singleton private constructor
+	/*
+	 * singleton private constructor
+	 */
 	private AdminFrame() {
 		super("Admin Control Panel");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -54,6 +63,9 @@ public class AdminFrame extends JFrame {
 		setLocationRelativeTo(null);
 	}
 	
+	/*
+	 * gets the singleton instance
+	 */
 	public synchronized static AdminFrame getInstance() {
 		if(INSTANCE == null) {
 			synchronized(AdminFrame.class) {
@@ -69,16 +81,62 @@ public class AdminFrame extends JFrame {
 		return userRecord;
 	}
 	
-//	Initializes the gui components of the admin panel
+	/*
+	 * Initializes the gui components of the admin panel
+	 */
 	private void initComponents() {
 		adminPanel = new JPanel();
 		adminPanel.setPreferredSize(new Dimension(800, 600));
 		adminPanel.setLayout(null);
 
 		initTreePanel();
+		initAddUser();
+		initAddUserGroup();
+		initAddUserView();
+		initAdminButtons();
 		
-		JTextField userIDField = new JTextField();
-		JButton addUserBtn = new JButton("Add User"), addGroupBtn = new JButton("Add Group");
+		add(adminPanel);
+	}
+	
+	/*
+	 * adds a new node to the tree (new user or usergroup)
+	 * @param node the new node to add
+	 */
+	private boolean addNode(MyTreeNode node) {
+		DefaultTreeModel model = (DefaultTreeModel)tree.getModel();
+		MyTreeNode root = (MyTreeNode) model.getRoot();
+		try {
+			model.insertNodeInto(node, tree.getSelectedNode(), tree.getSelectedNode().getChildCount());
+		} catch(NullPointerException | IllegalStateException e) {
+			//case: user tried to add user/group to tree without selecting any node 
+			//or selecting a UserNode (which can't have children)
+			JOptionPane.showMessageDialog(SwingUtilities.getAncestorOfClass(JFrame.class, this), "Must select a group to add the node to.");
+			return false;
+		}
+		return true;
+	}
+	
+	/*
+	 * Initializes the panel that shows the JTree
+	 */
+	private void initTreePanel() {
+		JPanel treePanel = new JPanel();
+		treePanel.setBounds(10,10,350,580);
+		treePanel.setBorder(BorderFactory.createLineBorder(darkSlateGray));
+		
+		MyTreeNode root = new UserGroupNode("Root");
+		tree = new MyTree(root);
+		treePanel.add(tree);
+		adminPanel.add(treePanel);
+	}
+	
+	/*
+	 * Initializes adding user area
+	 */
+	private void initAddUser() {
+		userIDField = new JTextField();
+		addUserBtn = new JButton("Add User");
+		addGroupBtn = new JButton("Add Group");
 		userIDField.setBounds(370, 10, 200, 30);
 		adminPanel.add(userIDField);
 		addUserBtn.setBounds(580, 10, 150, 30);
@@ -100,8 +158,13 @@ public class AdminFrame extends JFrame {
 			}
 		});
 		adminPanel.add(addUserBtn);
-		
-		JTextField groupIDField = new JTextField("");
+	}
+	
+	/*
+	 * Initializes the adding group area
+	 */
+	private void initAddUserGroup() {
+		groupIDField = new JTextField("");
 		groupIDField.setBounds(370, 50, 200, 30);
 		adminPanel.add(groupIDField);
 		addGroupBtn.setBounds(580, 50, 150, 30);
@@ -122,8 +185,13 @@ public class AdminFrame extends JFrame {
 			}
 		});
 		adminPanel.add(addGroupBtn);
-		
-		JButton userViewBtn = new JButton("Open User View");
+	}
+	
+	/*
+	 * Initializes the show user view area
+	 */
+	private void initAddUserView() {
+		userViewBtn = new JButton("Open User View");
 		userViewBtn.setBounds(370,100,360,30);
 		userViewBtn.addActionListener(new ActionListener() {
 
@@ -137,11 +205,23 @@ public class AdminFrame extends JFrame {
 			
 		});
 		adminPanel.add(userViewBtn);
-		
-		JButton showUserTotBtn = new JButton("Show user total"), 
-				showGroupTotBtn = new JButton("Show group total"),
-				showMsgsTotBtn = new JButton("Show messages total"),
-				showPosBtn = new JButton("Show positive percentage");
+	}
+	
+	/*
+	 * Initializes the admin buttons
+	 */
+	private void initAdminButtons() {
+		addShowUserTotBtn();
+		addShowGroupTotBtn();
+		addShowMsgsTotBtn();
+		addShowPosBtn();
+	}
+	
+	/*
+	 * Initializes the show user total button
+	 */
+	private void addShowUserTotBtn() { 
+		showUserTotBtn = new JButton("Show user total");
 		showUserTotBtn.setBounds(370,520,200,30);
 		showUserTotBtn.addActionListener(new ActionListener() {
 
@@ -154,7 +234,13 @@ public class AdminFrame extends JFrame {
 			
 		});
 		adminPanel.add(showUserTotBtn);
-		
+	}
+	
+	/*
+	 * Initializes the show usergroup total button
+	 */
+	private void addShowGroupTotBtn() {
+		showGroupTotBtn = new JButton("Show group total");
 		showGroupTotBtn.setBounds(580,520,200,30);
 		showGroupTotBtn.addActionListener(new ActionListener() {
 
@@ -167,7 +253,13 @@ public class AdminFrame extends JFrame {
 			
 		});
 		adminPanel.add(showGroupTotBtn);
-		
+	}
+	
+	/*
+	 * Initializes the show messages count button
+	 */
+	private void addShowMsgsTotBtn() {
+		showMsgsTotBtn = new JButton("Show messages total");
 		showMsgsTotBtn.setBounds(370,560,200,30);
 		showMsgsTotBtn.addActionListener(new ActionListener() {
 
@@ -179,7 +271,13 @@ public class AdminFrame extends JFrame {
 			}
 		});
 		adminPanel.add(showMsgsTotBtn);
-		
+	}
+	
+	/*
+	 * Initializes the show overall positivity button
+	 */
+	private void addShowPosBtn() {
+		showPosBtn = new JButton("Show positive percentage");
 		showPosBtn.setBounds(580,560,200,30);
 		showPosBtn.addActionListener(new ActionListener() {
 
@@ -195,63 +293,5 @@ public class AdminFrame extends JFrame {
 			}
 		});
 		adminPanel.add(showPosBtn);
-		
-		add(adminPanel);
-	}
-	
-	private boolean addNode(MyTreeNode node) {
-		DefaultTreeModel model = (DefaultTreeModel)tree.getModel();
-		MyTreeNode root = (MyTreeNode) model.getRoot();
-		try {
-			model.insertNodeInto(node, tree.getSelectedNode(), tree.getSelectedNode().getChildCount());
-		} catch(NullPointerException | IllegalStateException e) {
-//			case: user tried to add user/group to tree without selecting any node 
-//			or selecting a UserNode (which can't have children)
-			JOptionPane.showMessageDialog(SwingUtilities.getAncestorOfClass(JFrame.class, this), "Must select a group to add the node to.");
-			return false;
-		}
-		return true;
-	}
-	
-	private void initTreePanel() {
-		JPanel treePanel = new JPanel();
-		treePanel.setBounds(10,10,350,580);
-		treePanel.setBorder(BorderFactory.createLineBorder(darkSlateGray));
-		
-//		DefaultMutableTreeNode root = new UserGroupNode("Root");
-//		tree = new JTree(root);
-//		tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
-//		tree.getSelectionModel().addTreeSelectionListener(new TreeSelectionListener() {
-//		    
-//			@Override
-//		    public void valueChanged(TreeSelectionEvent e) {
-//		    	selectedNode = (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
-//		    	System.out.println("selected " + selectedNode);
-//		    }
-//			
-//		});
-//		
-//		DefaultTreeModel model = (DefaultTreeModel)tree.getModel();
-//		
-//		UserNode userSam = new UserNode("Sam");
-//		userRecord.put(userSam.getUserID(), userSam.getUser());
-//		DefaultMutableTreeNode group1 = new UserGroupNode("group1");
-//		model.insertNodeInto(userSam, group1, group1.getChildCount());
-//		model.insertNodeInto(group1, root, root.getChildCount());
-//		
-//		UserNode userAlex = new UserNode("Alex");
-//		userRecord.put("Alex", userAlex.getUser());
-//		userSam.subscribe(userAlex);
-//		model.insertNodeInto(userAlex, root, root.getChildCount());
-//		
-//		//initialize tree with nodes expanded
-//		for (int i = 0; i < tree.getRowCount(); i++) {
-//		    tree.expandRow(i);
-//		}
-		
-		MyTreeNode root = new UserGroupNode("Root");
-		tree = new MyTree(root);
-		treePanel.add(tree);
-		adminPanel.add(treePanel);
 	}
 }

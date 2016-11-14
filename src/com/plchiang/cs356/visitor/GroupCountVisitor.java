@@ -1,3 +1,7 @@
+/*
+ * Visitor class that counts the number of usergroups
+ */
+
 package com.plchiang.cs356.visitor;
 
 import com.plchiang.cs356.composite.UserGroupNode;

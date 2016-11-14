@@ -1,5 +1,6 @@
 /* UserFrame
- * JFrame wrapper class for UserPanel
+ * Window that shows the selected user's user info.
+ * Accessed from AdminFrame.
  */
 
 package com.plchiang.cs356;
@@ -27,10 +28,18 @@ public class UserFrame extends JFrame {
 	private User user;
 	private JPanel userPanel;
 	private Hashtable<String, User> userRecord;
+	private JTextField userIDField, messageField;
+	private DefaultListModel<String> followingModel, newsfeedModel;
+	private JButton followBtn;
+	private JLabel followingLabel, newsfeedLabel;
+	private JList<String> followingList, newsfeedList;
+	private JScrollPane newsfeedPane, followingPane;
 	
 	public UserFrame(UserNode userNode) {
 		user = userNode.getUser();
 		userRecord  = AdminFrame.getUserRecord();
+		followingModel = user.getFollowingModel();
+		newsfeedModel = user.getNewsfeedModel();
 		setTitle(user.getUserID() + "'s Control Panel");
 		initComponents();
 		pack();
@@ -45,12 +54,20 @@ public class UserFrame extends JFrame {
 		userPanel.setLayout(null);
 		userPanel.setPreferredSize(new Dimension(300, 500));
 		
-		JTextField userIDField = new JTextField("");
+		initFollowUserArea();
+		initCurrentlyFollowingArea();
+		initPostTweetArea();
+		initNewsfeedArea();
+		
+		add(userPanel);
+	}
+	
+	private void initFollowUserArea() {
+		userIDField = new JTextField("");
 		userIDField.setBounds(10,10,150,30);
 		userPanel.add(userIDField);
 		
-		DefaultListModel<String> followingModel = user.getFollowingModel();
-		JButton followBtn = new JButton("Follow User");
+		followBtn = new JButton("Follow User");
 		followBtn.setBounds(170,10,120,30);
 		followBtn.addActionListener(new ActionListener() {
 			@Override
@@ -67,27 +84,28 @@ public class UserFrame extends JFrame {
 			}
 		});
 		userPanel.add(followBtn);
+	}
 	
-		JLabel followingLabel = new JLabel("Currently Following");
+	private void initCurrentlyFollowingArea() {
+		followingLabel = new JLabel("Currently Following");
 		followingLabel.setBounds(10,50,150,30);
 		userPanel.add(followingLabel);
 		
-		JList<String> followingList = new JList<>();
-		
+		followingList = new JList<>();
 		followingList.setModel(followingModel);
 		followingList.setLayoutOrientation(JList.VERTICAL);
 		followingList.setVisibleRowCount(-1);
 		
-		JScrollPane followingPane = new JScrollPane(followingList);
+		followingPane = new JScrollPane(followingList);
 		followingPane.setBounds(10,80,280,105);
 		userPanel.add(followingPane);
-		
-		JTextField messageField = new JTextField("");
+	}
+	
+	private void initPostTweetArea() {
+		messageField = new JTextField("");
 		messageField.setBounds(10,205,150,30);
 		userPanel.add(messageField);
 		
-		
-		DefaultListModel<String> newsfeedModel = user.getNewsfeedModel();
 		JButton postBtn = new JButton("Post Tweet");
 		postBtn.setBounds(170,205,120,30);
 		postBtn.addActionListener(new ActionListener() {
@@ -102,21 +120,20 @@ public class UserFrame extends JFrame {
 			
 		});
 		userPanel.add(postBtn);
-		
-		JLabel newsfeedLabel = new JLabel("Newsfeed");
+	}
+	
+	private void initNewsfeedArea() {
+		newsfeedLabel = new JLabel("Newsfeed");
 		newsfeedLabel.setBounds(10,245,150,30);
 		userPanel.add(newsfeedLabel);
 		
-		JList<String> newsfeedList = new JList<>();
+		newsfeedList = new JList<>();
 		
 		newsfeedList.setModel(newsfeedModel);
-		JScrollPane newsfeedPane = new JScrollPane(newsfeedList);
+		newsfeedPane = new JScrollPane(newsfeedList);
 		newsfeedPane.setBounds(10,275,280,205);
 		newsfeedList.setLayoutOrientation(JList.VERTICAL);
 		newsfeedList.setVisibleRowCount(-1);
 		userPanel.add(newsfeedPane);
-		
-		add(userPanel);
 	}
-
 }

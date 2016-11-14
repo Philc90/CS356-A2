@@ -1,3 +1,7 @@
+/*
+ * Visitor class that counts number of messages in each user's newsfeed
+ */
+
 package com.plchiang.cs356.visitor;
 
 import com.plchiang.cs356.composite.UserGroupNode;

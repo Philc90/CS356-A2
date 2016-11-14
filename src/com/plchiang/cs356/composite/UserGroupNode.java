@@ -1,5 +1,5 @@
 /*	UserGroupNode
- *  Composite pattern - UserGroupNode is a child of DefaultMutableTreeNode class and is the composite version
+ *  Composite pattern - UserGroupNode is a child of MyTreeNode class and is the composite version
  */
 
 package com.plchiang.cs356.composite;
